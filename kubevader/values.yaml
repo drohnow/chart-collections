@@ -5,9 +5,9 @@ global:
   annotations: {}
 
 apps:
-  kubevader2:
+  vader:
     enabled: true
-    serviceName: foo/web
+    serviceName: vader-svc
     type: statefulset
     rollingUpdate:
       unavailable:
@@ -17,7 +17,7 @@ apps:
       
     replicas: 2
     containers:
-      kubevader2:
+      vader:
         image:
           # -- Specify the image repository for the container
           repository: luckysideburn/kubeinvaders
@@ -25,9 +25,9 @@ apps:
           tag: v1.9.6
 
 services:
-  kubevader2:
+  vader-svc:
     enabled: true
-    appName: kubevader2
+    appName: vader
     type: ClusterIP
     clusterIP: None
     ports:
