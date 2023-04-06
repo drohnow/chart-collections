@@ -1,0 +1,40 @@
+global:
+  # -- Set additional global labels.
+  labels: {}
+  # -- Set additional global annotations.
+  annotations: {}
+
+apps:
+  kubevader:
+    enabled: true
+    serviceName: foo
+    type: statefulset
+    rollingUpdate:
+      unavailable:
+      surge:
+      partition: 3
+
+      
+    replicas: 2
+    containers:
+      kubevader:
+        image:
+          # -- Specify the image repository for the container
+          repository: luckysideburn/kubeinvaders
+          # -- Specify the image tag for the container
+          tag: v1.9.6
+
+services:
+  kubevader:
+    enabled: true
+    appName: kubevader
+    type: ClusterIP
+    clusterIP: None
+    ports:
+      webui:
+        enabled: true
+        port: 8080
+        protocol: TCP
+        nodePort: 
+        targetPort: 8080
+
