@@ -5,7 +5,7 @@ global:
   annotations: {}
 
 apps:
-  kubevader:
+  kubevader2:
     enabled: true
     serviceName: foo
     type: statefulset
@@ -17,7 +17,7 @@ apps:
       
     replicas: 2
     containers:
-      kubevader:
+      kubevader2:
         image:
           # -- Specify the image repository for the container
           repository: luckysideburn/kubeinvaders
@@ -25,7 +25,7 @@ apps:
           tag: v1.9.6
 
 services:
-  kubevader:
+  kubevader2:
     enabled: true
     appName: kubevader
     type: ClusterIP
