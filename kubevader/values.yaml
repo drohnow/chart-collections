@@ -27,7 +27,7 @@ apps:
 services:
   kubevader2:
     enabled: true
-    appName: kubevader
+    appName: kubevader2
     type: ClusterIP
     clusterIP: None
     ports:
