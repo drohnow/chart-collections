@@ -7,7 +7,7 @@ global:
 apps:
   kubevader2:
     enabled: true
-    serviceName: foo
+    serviceName: foo/web
     type: statefulset
     rollingUpdate:
       unavailable:
