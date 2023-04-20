@@ -28,13 +28,13 @@ services:
   vader-svc:
     enabled: true
     appName: vader
-    type: ClusterIP
+    type: NodePort
     clusterIP: None
     ports:
       webui:
         enabled: true
         port: 8080
         protocol: TCP
-        nodePort: 
+        nodePort: 8085
         targetPort: 8080
 
