@@ -8,11 +8,11 @@ apps:
   vader:
     enabled: true
     serviceName: vader-svc
-    type: statefulset
+    type: deployment
     rollingUpdate:
       unavailable:
       surge:
-      partition: 3
+      partition: 
 
       
     replicas: 2
