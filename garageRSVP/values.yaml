@@ -1,10 +1,5 @@
 global:
-  # -- Set additional global labels.
-  labels: {}
-  # -- Set additional global annotations.
-  annotations: {}
-  # -- Set the full object prefix, defaults to releasName-ChartName if not set. This value takes precedence over nameOverride.
-  fullNameOverride:
+
   # -- Set an override for the ChartName, defaults to ChartName if not set.
   nameOverride:
 
@@ -32,7 +27,7 @@ apps:
   mongodb:
     enabled: true
     type: deployment
-    fullNameOverride: mongodb
+    fullNameOverride:
     replicas: 1
     imagePullSecrets: []
 
@@ -194,9 +189,9 @@ apps:
 
 services:
  mongodb:
-    enabled: true
+    enabled: false
     appName: mongodb
-    fullNameOverride: mongodb
+    fullNameOverride:
     type: ClusterIP
     clusterIP:
     externalTrafficPolicy:
@@ -216,9 +211,9 @@ services:
         nodePort:
 
  webui:
-    enabled: true
+    enabled: false
     appName: webui
-    fullNameOverride: webui
+    fullNameOverride:
     type: ClusterIP
     clusterIP:
     externalTrafficPolicy:
@@ -235,10 +230,25 @@ services:
         port: 5000
         protocol: TCP
         targetPort: 5000
+
+configmaps:
+  test:
+    # -- Enables or disables the configMap
+    enabled: false
+    # -- Labels to add to the configMap
+    labels: {}
+    # -- Annotations to add to the configMap
+    annotations: {}
+    # -- configMap data content. Helm template enabled.
+    data: {}
+      # foo: bar
+    # -- Override the name of this object. Default name if not overwritten will be releaseName-ChartName-objectName
+    fullNameOverride: dagr
+
   
 ingresses:
  webui:
-    enabled: true
+    enabled: false
     serviceName: webui
     fullNameOverride:
     annotations: {}
