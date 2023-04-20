@@ -15,5 +15,5 @@ This repo contains a collection of helm charts that are derived from the [replic
    - replicated Library 0.5.2
 
    TODOS: 
-   - add persistence to mongodb backend
-   - add TLS to web frontend
+   - add TLS to web frontend.
+   - change mongodb deployment to a statefulset with a headless service & persistent storage.
