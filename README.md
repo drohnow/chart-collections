@@ -7,9 +7,13 @@ This repo contains a collection of helm charts that are derived from the [replic
    - external access: NodePort
    - replicated library 0.5.2
    
-2. GarageRSVP - A 2-tier app; web application that is backed by a mongodb
+2. GarageRSVP - A 2-tier app; a simple web application that is backed by a mongodb
    - multiple deployments:
      - web frontend
      - mongodb
    - external access: Ingress
-   - Replicated Library 0.5.2
+   - replicated Library 0.5.2
+
+   TODOS: 
+   - add persistence to mongodb backend
+   - add TLS to web frontend
