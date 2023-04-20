@@ -1,4 +1,4 @@
-# helm-apps
+# chart-collections
 
 This repo contains a collection of helm charts that are derived from the [replicated library chart](https://github.com/replicatedhq/helm-charts).
 
