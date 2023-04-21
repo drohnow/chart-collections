@@ -1,5 +1,5 @@
 global:
-
+  fullNameOverride:
   # -- Set an override for the ChartName, defaults to ChartName if not set.
   nameOverride:
 
