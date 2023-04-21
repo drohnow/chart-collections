@@ -189,7 +189,7 @@ apps:
 
 services:
  mongodb:
-    enabled: false
+    enabled: true
     appName: mongodb
     fullNameOverride:
     type: ClusterIP
@@ -211,7 +211,7 @@ services:
         nodePort:
 
  webui:
-    enabled: false
+    enabled: true
     appName: webui
     fullNameOverride:
     type: ClusterIP
@@ -248,7 +248,7 @@ configmaps:
   
 ingresses:
  webui:
-    enabled: false
+    enabled: true
     serviceName: webui
     fullNameOverride:
     annotations: {}
@@ -266,7 +266,7 @@ ingresses:
 
 persistence:
  mongodb:
-    enabled: false
+    enabled: true
 
     type: persistentVolumeClaim
 
