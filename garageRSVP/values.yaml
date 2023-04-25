@@ -194,7 +194,7 @@ services:
  mongodb:
     enabled: true
     appName:
-    fullNameOverride:
+    fullNameOverride: mongodb
     type: ClusterIP
     clusterIP:
     externalTrafficPolicy:
