@@ -11,6 +11,5 @@ spec:
     nodePort: 31081
     port: 5000
     protocol: TCP
-    targetPort: 5000
   selector:
-    app: webui
+    app: test

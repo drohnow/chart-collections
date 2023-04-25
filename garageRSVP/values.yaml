@@ -1,4 +1,9 @@
 global:
+  # -- Set additional global labels.
+  labels: {}
+  # -- Set additional global annotations.
+  annotations: {}
+  # -- Set the full object prefix, defaults to releasName-ChartName if not set. This value takes precedence over nameOverride.
   fullNameOverride:
   # -- Set an override for the ChartName, defaults to ChartName if not set.
   nameOverride:
@@ -65,7 +70,6 @@ apps:
     volumes: []
     annotations: {}
     labels:
-      appdb: testdb
 
     automountServiceAccountToken: true
     serviceAccount:
@@ -146,7 +150,6 @@ apps:
     volumes: []
     annotations: {}
     labels:
-      app: test
 
     automountServiceAccountToken: true
     serviceAccount:
@@ -190,7 +193,7 @@ apps:
 services:
  mongodb:
     enabled: true
-    appName: mongodb
+    appName:
     fullNameOverride:
     type: ClusterIP
     clusterIP:
@@ -199,9 +202,7 @@ services:
     ipFamilies: []
     annotations: {}
     labels:
-      app: testdb
     selector:
-      appdb: testdb
     ports:
       mongodb:
         enabled: true
@@ -212,8 +213,8 @@ services:
 
  webui:
     enabled: true
-    appName: webui
-    fullNameOverride:
+    appName:
+    fullNameOverride: webui
     type: ClusterIP
     clusterIP:
     externalTrafficPolicy:
@@ -221,39 +222,22 @@ services:
     ipFamilies: []
     annotations: {}
     labels:
-      app: webui
     selector:
-      app: webui
     ports:
       webui:
         enabled: true
         port: 5000
         protocol: TCP
         targetPort: 5000
-
-configmaps:
-  test:
-    # -- Enables or disables the configMap
-    enabled: false
-    # -- Labels to add to the configMap
-    labels: {}
-    # -- Annotations to add to the configMap
-    annotations: {}
-    # -- configMap data content. Helm template enabled.
-    data: {}
-      # foo: bar
-    # -- Override the name of this object. Default name if not overwritten will be releaseName-ChartName-objectName
-    fullNameOverride: dagr
-
   
 ingresses:
  webui:
     enabled: true
-    serviceName: webui
+    serviceName:
     fullNameOverride:
     annotations: {}
     labels: {}
-    ingressClassName:  # "nginx"
+    ingressClassName: contour
     hosts:
       - host: garage.rohnow.net
         paths:
@@ -264,9 +248,24 @@ ingresses:
               port: 5000
     tls: []
 
+
+configmaps:
+  dagr-cm:
+    # -- Enables or disables the configMap
+    enabled: false
+    # -- Labels to add to the configMap
+    labels: {}
+    # -- Annotations to add to the configMap
+    annotations: {}
+    # -- configMap data content. Helm template enabled.
+    data:
+      foo: bar
+    # -- Override the name of this object. Default name if not overwritten will be releaseName-ChartName-objectName
+    fullNameOverride:
+
 persistence:
  mongodb:
-    enabled: true
+    enabled: false
 
     type: persistentVolumeClaim
 

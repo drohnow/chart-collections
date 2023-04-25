@@ -25,7 +25,8 @@ appVersion: "1.16.0"
 
 dependencies:
 - name: replicated-library
-  #repository: https://replicatedhq.github.io/helm-charts
-  repository: file://../../helm-charts/charts/replicated-library
-  version: 0.7.0
+  repository: https://replicatedhq.github.io/helm-charts
+  #repository: file://../../helm-charts/charts/replicated-library
+  version: 0.7.1
 
+  
