@@ -233,7 +233,7 @@ services:
 ingresses:
  webui:
     enabled: true
-    serviceName:
+    serviceName: webui
     fullNameOverride:
     annotations: {}
     labels: {}
