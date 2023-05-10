@@ -1,0 +1,6 @@
+dependencies:
+- name: replicated-library
+  repository: file://../../helm-charts/charts/replicated-library
+  version: 0.10.0
+digest: sha256:971d6e0ab70ff137fe6d56ee4b973310afe2d31b95c840f2b684b01af9afc77b
+generated: "2023-05-10T09:49:07.200102-07:00"

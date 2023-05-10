@@ -1,0 +1,295 @@
+global:
+  fullNameOverride:
+  # -- Set an override for the ChartName, defaults to ChartName if not set.
+  nameOverride:
+
+defaults:
+  image:
+    pullPolicy: IfNotPresent
+  strategy: RollingUpdate
+  probes:
+    livenessProbe:
+      initialDelaySeconds: 0
+      periodSeconds: 10
+      timeoutSeconds: 5
+      successThreshold: 1
+      failureThreshold: 5
+      terminationGracePeriodSeconds: 30
+    readinessProbe:
+      initialDelaySeconds: 0
+      periodSeconds: 10
+      timeoutSeconds: 1
+      successThreshold: 1
+      failureThreshold: 5
+    startupProbe: {}
+
+apps:
+  mongodb:
+    enabled: true
+    type: deployment
+    fullNameOverride:
+    replicas: 1
+    imagePullSecrets: []
+
+    containers:
+     mongodb:
+        image:
+          repository: mongo
+          tag: 5.0.16-focal
+          pullPolicy:
+
+        command: []
+        args: 
+        env:
+          MONGODB_DATABASE: testdata
+
+        envFrom:
+
+        ports: []
+        volumeMounts: []
+        probes:
+          readinessProbe: {}
+          livenessProbe: {}
+          startupProbe: {}
+        securityContext: {}
+        lifecycle: {}
+
+        termination:
+          messagePath:
+          messagePolicy:
+          gracePeriodSeconds:
+
+        resources: {}
+
+    initContainers: {}
+    volumes: []
+    annotations: {}
+    labels:
+      appdb: testdb
+
+    automountServiceAccountToken: true
+    serviceAccount:
+      create: false
+      annotations: {}
+      name: ""
+
+    podManagementPolicy:
+    podAnnotations: {}
+    podLabels: {}
+
+    strategy:
+    rollingUpdate:
+      unavailable:
+      surge:
+      partition:
+    revisionHistoryLimit: 3
+
+    priorityClassName:  # system-node-critical
+    runtimeClassName:  # nvidia
+    schedulerName:  # awkward-dangerous-scheduler
+    hostname:
+    hostNetwork: false
+    dnsPolicy:  # ClusterFirst
+    dnsConfig: {}
+    enableServiceLinks: true
+    podSecurityContext: {}
+
+    volumeClaimTemplates: []
+
+    nodeSelector: {}
+
+    affinity: {}
+
+    topologySpreadConstraints: []
+    tolerations: []
+
+    hostAliases: []
+
+  webui:
+    enabled: true
+    type: deployment
+    fullNameOverride:
+    replicas: 1
+    imagePullSecrets: []
+
+    containers:
+     webui:
+        image:
+          repository: teamcloudyuga/rsvpapp
+          tag: latest
+          pullPolicy:
+
+        command: []
+        args: 
+        env:
+          MONGODB_HOST: mongodb
+
+        envFrom:
+
+        ports: []
+        volumeMounts: []
+        probes:
+          readinessProbe: {}
+          livenessProbe: {}
+          startupProbe: {}
+        securityContext: {}
+        lifecycle: {}
+
+        termination:
+          messagePath:
+          messagePolicy:
+          gracePeriodSeconds:
+
+        resources: {}
+
+    initContainers: {}
+    volumes: []
+    annotations: {}
+    labels:
+      app: test
+
+    automountServiceAccountToken: true
+    serviceAccount:
+      create: false
+      annotations: {}
+      name: ""
+
+    podManagementPolicy:
+    podAnnotations: {}
+    podLabels: {}
+
+    strategy:
+    rollingUpdate:
+      unavailable:
+      surge:
+      partition:
+    revisionHistoryLimit: 3
+
+    priorityClassName:  # system-node-cri
+    runtimeClassName:  # nvidia
+    schedulerName:  # awkward-dangerous-s
+    hostname:
+    hostNetwork: false
+    dnsPolicy:  # ClusterFirst
+    dnsConfig: {}
+    enableServiceLinks: true
+    podSecurityContext: {}
+
+    volumeClaimTemplates: []
+
+    nodeSelector: {}
+
+    affinity: {}
+
+    topologySpreadConstraints: []
+    tolerations: []
+
+    hostAliases: []
+
+
+services:
+ mongodb:
+    enabled: true
+    appName: mongodb
+    fullNameOverride:
+    type: ClusterIP
+    clusterIP:
+    externalTrafficPolicy:
+    ipFamilyPolicy:
+    ipFamilies: []
+    annotations: {}
+    labels:
+      app: testdb
+    selector:
+      appdb: testdb
+    ports:
+      mongodb:
+        enabled: true
+        port: 27017
+        protocol: TCP
+        targetPort: 27017
+        nodePort:
+
+ webui:
+    enabled: true
+    appName: webui
+    fullNameOverride:
+    type: ClusterIP
+    clusterIP:
+    externalTrafficPolicy:
+    ipFamilyPolicy:
+    ipFamilies: []
+    annotations: {}
+    labels:
+      app: webui
+    selector:
+      app: webui
+    ports:
+      webui:
+        enabled: true
+        port: 5000
+        protocol: TCP
+        targetPort: 5000
+
+configmaps:
+  test:
+    # -- Enables or disables the configMap
+    enabled: false
+    # -- Labels to add to the configMap
+    labels: {}
+    # -- Annotations to add to the configMap
+    annotations: {}
+    # -- configMap data content. Helm template enabled.
+    data: {}
+      # foo: bar
+    # -- Override the name of this object. Default name if not overwritten will be releaseName-ChartName-objectName
+    fullNameOverride: dagr
+
+  
+ingresses:
+ webui:
+    enabled: true
+    serviceName: webui
+    fullNameOverride:
+    annotations: {}
+    labels: {}
+    ingressClassName:  # "nginx"
+    hosts:
+      - host: garage.rohnow.net
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              name:
+              port: 5000
+    tls: []
+
+persistence:
+ mongodb:
+    enabled: true
+
+    type: persistentVolumeClaim
+
+    fullNameOverride:
+    persistentVolume:
+      spec:
+        capacity:
+          storage: 1Gi
+        accessModes:
+          - ReadWriteOnce
+        reclaimPolicy:
+          - Recycle
+        hostPath:
+          path: /tmp/data1
+
+    persistentVolumeClaim:
+      existingClaimName:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        volumeMode: Filesystem
+        persistentVolumeReclaimPolicy: Retain
+        resources:
+          requests:
+            storage: 8Gi
+        storageClassName: slow
