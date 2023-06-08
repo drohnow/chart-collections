@@ -1,0 +1,360 @@
+global:
+  labels: {}
+  annotations: {}
+  fullNameOverride:
+  nameOverride:
+  appReload: false
+
+apps:
+  mysql:
+    enabled: true
+    type: statefulset
+    serviceName: mysql-wp
+    replicas: 1
+    imagePullSecrets: []
+    containers:
+      mysql:
+        image:
+          repository: mysql
+          tag: latest
+          pullPolicy:
+        command:
+
+        args: []
+        env:
+        envFrom:
+        - secretRef:
+            name: sql-auth
+
+        ports: []
+        volumeMounts:
+        - name: mysql-persistent-storage
+          mountPath: /var/lib/mysql
+        - name: mysql-initdb
+          mountPath: /docker-entrypoint-initdb.d
+        
+    initContainers:
+       init-myservice:
+          image:
+            repository: busybox
+            tag: 1.28
+          command:
+            ['sh', '-c', 'echo The app is running! && sleep 10']
+
+            
+    volumes:
+      - name: mysql-persistent-storage
+        persistentVolumeClaim:
+          claimName: mysql-pvc-my-wp-dagr-mysql-0
+      - name: mysql-initdb
+        configMap:
+          name: mysql-initdb-config    
+    strategy:
+    rollingUpdate:
+      unavailable:
+      surge:
+      partition:
+    revisionHistoryLimit: 3
+    priorityClassName: # system-node-critical
+    runtimeClassName: # nvidia
+    schedulerName: # awkward-dangerous-scheduler
+    hostname:
+    hostNetwork: false
+    dnsPolicy: # ClusterFirst
+    dnsConfig: {}
+    enableServiceLinks: false
+    podSecurityContext: {}
+    volumeClaimTemplates:
+    - name: mysql-pvc
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        volumeMode: Filesystem
+        resources:
+          requests:
+            storage: 8Gi
+        storageClassName: default
+    nodeSelector: {}
+    affinity: {}
+    topologySpreadConstraints: []
+    tolerations: []
+    hostAliases: []
+
+  wordpress:
+    enabled: true
+    type: deployment
+    serviceName:
+    replicas: 1
+    imagePullSecrets: []
+    labels:
+      app: wordpress
+      tier: frontend
+
+    containers:
+      wordpress:
+        image:
+          repository: wordpress
+          tag: latest
+          pullPolicy:
+        command: []
+        args: []
+        env:
+        envFrom:
+        - secretRef:
+            name: wordpress-env
+        ports: []
+        volumeMounts:
+        - name: wordpress-persistent-storage
+          mountPath: /var/www/html
+    volumes:
+      - name: wordpress-persistent-storage
+        persistentVolumeClaim:
+          claimName: wordpress-pvc
+    strategy:
+    rollingUpdate:
+      unavailable:
+      surge:
+      partition:
+    revisionHistoryLimit: 3
+    priorityClassName: # system-node-critical
+    runtimeClassName: # nvidia
+    schedulerName: # awkward-dangerous-scheduler
+    hostname:
+    hostNetwork: false
+    dnsPolicy: # ClusterFirst
+    dnsConfig: {}
+    enableServiceLinks: false
+    podSecurityContext: {}
+    volumeClaimTemplates: 
+    nodeSelector: {}
+    affinity: {}
+    topologySpreadConstraints: []
+    tolerations: []
+    hostAliases: []
+
+secrets:
+  mysql:
+    enabled: true
+    labels: {}
+    annotations: {}
+    data:
+      MYSQL_ROOT_PASSWORD: Trek1515
+    fullNameOverride: sql-auth
+    type: Opaque
+    appReload: false
+
+  wordpress-env:
+    enabled: true
+    labels: {}
+    annotations: {}
+    data:
+      WORDPRESS_DB_HOST: mysql-svc
+      WORDPRESS_DB_PASSWORD: Trek1515
+      WORDPRESS_DB_NAME: wpdb
+      WORDPRESS_DB_USER: root
+      WORDPRESS_DEBUG: "1"
+    fullNameOverride: wordpress-env
+    type: Opaque
+    appReload: false
+
+configmaps:
+  mysql-initdb-config:
+    enabled: true
+    labels: {}
+    annotations: {}
+    data:
+      init.sql: |
+        CREATE DATABASE IF NOT EXISTS wpdb;
+    fullNameOverride: mysql-initdb-config
+    appReload: false
+
+services:
+  mysql:
+    enabled: true
+    appName: 
+    fullNameOverride: mysql-svc
+    type: ClusterIP
+    selector:
+    clusterIP:
+    externalTrafficPolicy:
+    ipFamilyPolicy:
+    ipFamilies: []
+    annotations: {}
+    labels: {}
+    ports:
+      mysql:
+        enabled: true
+        port: 3306
+        protocol: TCP
+        targetPort: 3306
+        nodePort:
+
+  wordpress:
+    enabled: true
+    appName:
+    fullNameOverride: wordpress
+    type: NodePort
+    selector: 
+    clusterIP:
+    externalTrafficPolicy:
+    ipFamilyPolicy:
+    ipFamilies: []
+    annotations: {}
+    labels: {}
+    ports:
+      wordpress:
+        enabled: true
+        port: 80
+        protocol: TCP
+        targetPort: 80
+        nodePort: 
+
+
+ingresses:
+  example:
+    enabled: false
+    serviceName: example
+    fullNameOverride:
+    annotations: {}
+    labels: {}
+    ingressClassName: # "nginx"
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /
+            pathType: Prefix
+            service:
+              name:
+              port:
+    tls: []
+
+persistence:
+  mysql:
+    enabled: false
+    type: persistentVolumeClaim
+    fullNameOverride: mysql-pvc
+    persistentVolume:
+      spec:
+        capacity:
+          storage: 1Gi
+        accessModes:
+          - ReadWriteOnce
+        reclaimPolicy:
+          - Recycle
+        hostPath:
+          path:
+
+    persistentVolumeClaim:
+      existingClaimName:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        volumeMode: Filesystem
+        persistentVolumeReclaimPolicy: Retain
+        resources:
+          requests:
+            storage: 20Gi
+        storageClassName: default
+
+  wordpress:
+    enabled: true
+    type: persistentVolumeClaim
+    fullNameOverride:
+    persistentVolume:
+      spec:
+        capacity:
+          storage: 50Gi
+        accessModes:
+          - ReadWriteOnce
+        reclaimPolicy:
+          - Recycle
+        hostPath:
+          path:
+
+    persistentVolumeClaim:
+      existingClaimName:
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        volumeMode: Filesystem
+        persistentVolumeReclaimPolicy: Retain
+        resources:
+          requests:
+            storage: 20Gi
+        storageClassName: default
+
+
+serviceAccounts:
+  example:
+    enabled: false
+    labels: {}
+    annotations: {}
+    fullNameOverride:
+
+roles:
+  example:
+    enabled: false
+    labels: {}
+    annotations: {}
+    fullNameOverride:
+    kind: Role
+    aggregationRule: {}
+    rules: []
+
+roleBindings:
+  example:
+    enabled: false
+    labels: {}
+    annotations: {}
+    fullNameOverride:
+    kind: RoleBinding
+    subjects:
+      - name: example
+        namespace:
+        kind: ServiceAccount
+    roleRef:
+      kind: Role
+      name: example
+
+troubleshoot:
+  support-bundles:
+    replicated:
+      enabled: false
+      uri: https://raw.githubusercontent.com/replicatedhq/troubleshoot-specs/main/in-cluster/default.yaml
+      my-custom-bundle:
+        enabled: false
+        collectors:
+          - clusterInfo: {}
+          - clusterResources: {}
+          - ceph: {}
+          - longhorn: {}
+          - logs:
+              collectorName: wg-easy
+              selector:
+                app: wg-easy
+              namespace: default
+              containerNames:
+                - wg-easy
+          - logs:
+              collectorName: some-postgres-db
+              selector:
+                app: some-postgres-db
+  preflights:
+    my-preflights:
+      image: replicated/preflight:latest
+      enabled: false
+      collectors:
+        - run:
+            collectorName: "static-hi"
+            image: "alpine:3"
+            command: ["echo", "hi static!"]
+      analyzers:
+        - textAnalyze:
+            checkName: Said hi!
+            fileName: /static-hi.log
+            regex: "hi static"
+            outcomes:
+              - fail:
+                  message: Didn't say hi.
+              - pass:
+                  message: Said hi!
